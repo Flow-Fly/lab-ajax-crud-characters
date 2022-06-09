@@ -11,7 +11,7 @@ const cookieParser = require("cookie-parser");
 
 // ℹ️ Needed to accept from requests from 'the outside'. CORS stands for cross origin resource sharing
 // unless the request if from the same domain, by default express wont accept POST requests
-// const cors = require("cors");
+const cors = require("cors");
 
 // Middleware configuration
 module.exports = (app) => {
@@ -20,12 +20,12 @@ module.exports = (app) => {
   app.set("trust proxy", 1);
 
   // controls a very specific header to pass headers from the frontend
-  // app.use(
-  //   cors({
-  //     credentials: true,
-  //     origin: ["http://localhost:5500","http://127.0.0.1:5500"]
-  //   })
-  // );
+  app.use(
+    cors({
+      credentials: true,
+      origin: ["http://localhost:5500", "http://127.0.0.1:5500"],
+    })
+  );
 
   // In development environment the app logs
   app.use(logger("dev"));
