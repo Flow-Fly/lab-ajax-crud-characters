@@ -25,7 +25,7 @@ const characters = [
 
 async function seedDatabase () {
   try {
-    const db = await openConnection()
+    const db = await openConnection();
     console.log(`Succesfully connected to ${db.connection.name} database.`);
     const createdCharacters = await Character.create(characters)
     console.log(`Created ${createdCharacters.length} characters 🥸`)

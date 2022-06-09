@@ -33,9 +33,9 @@ We will first create an **API** to then do an application to Create, Read, Updat
   - It receives NO parameters
   - It returns the full characters list
   - It returns JSON
-- **Verb:** GET, **Route:** "/characters/:id"
-  - It receives the character ID as a parameter (route)
-  - It returns the character with the indicated `id`
+- **Verb:** GET, **Route:** "/characters/:name"
+  - It receives the character Name as a parameter (route)
+  - It returns the character with the indicated `name`
   - It returns JSON
 - **Verb:** POST, **Route:** "/characters"
   - It receives an object as a parameter, with the following format:
