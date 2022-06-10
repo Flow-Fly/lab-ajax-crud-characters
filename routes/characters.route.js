@@ -23,15 +23,27 @@ router.get("/", async (req, res, next) => {
  */
 router.post("/", async (req, res, next) => {
   try {
-    const { name, occupation, cartoon, weapon } = req.body;
-    if (!name || !occupation || !cartoon || !weapon) {
-      res.status(400).json({ message: "Please provide a full character" });
-    } else {
-      const addCharacter = await Character.create(req.body);
-      res
-        .status(201)
-        .json({ message: "new character created :", addCharacter });
+    // const { name, occupation, cartoon, weapon } = req.body;
+    if (!req.body.name || typeof req.body.name !== "string") {
+      res.status(400).json({ message: "Please provide a character's name" });
+      return;
     }
+    if (!req.body.occupation || typeof req.body.occupation !== "string") {
+      res
+        .status(400)
+        .json({ message: "Please provide a character's occupation" });
+      return;
+    }
+    if (!req.body.weapon || typeof req.body.weapon !== "string") {
+      res.status(400).json({ message: "Please provide a character's weapon" });
+      return;
+    }
+    // if (!req.body.cartoon || typeof req.body.cartoon !== "boolean"){
+    //   res.status(400).json({ message: "Please provide a character's cartoon" });
+    //   return
+    // }
+    const addCharacter = await Character.create(req.body);
+    res.status(201).json({ message: "new character created :", addCharacter });
   } catch (err) {
     next(err);
   }
@@ -56,17 +68,12 @@ router.get("/:name", async (req, res, next) => {
  */
 router.patch("/:id", async (req, res, next) => {
   try {
-    let { character } = req.body;
+    // let { character } = req.body;
     const id = req.params.id;
-    if (!isValidObjectId(character)) {
-      const updatedCharacter = await Character.findByIdAndUpdate(id, req.body, {
-        new: true,
-      });
-
-      res.status(200).json(updatedCharacter);
-    } else {
-      res.status(404).json({ message: "Character not found" });
-    }
+    const updatedCharacter = await Character.findByIdAndUpdate(id, req.body, {
+      new: true,
+    });
+    res.status(200).json(updatedCharacter);
   } catch (err) {
     next(err);
   }

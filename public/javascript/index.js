@@ -43,21 +43,39 @@ async function getCharacters() {
 }
 
 async function editCharacter(e) {
-  e.preventDefault();
-  const editButton = document.getElementById("send-data-edit")
-  editButton.classList.remove("inactive")
-  let character = {
-    name: nameEdit.value,
-    occupation: occupationEdit.value,
-    weapon: weaponEdit.value,
-    cartoon: !!cartoonEdit.value,
-  };
-  const id = idEditInput.value;
-  const { data } = await axios.patch(`${baseUrl}/${id}`, character);
-  editButton.classList.add("active")
+  try {
+    e.preventDefault();
+    const editButton = document.getElementById("send-data-edit");
+    editButton.classList.remove("inactive");
+    const idEditInput = qs("input[name=chr-id]").value;
+    const occupationEdit = qs("input[name=occupation-edit]").value;
+    const weaponEdit = qs("input[name=weapon-edit]").value;
+    const cartoonEdit = qs("input[name=cartoon-edit]").checked;
+    const nameEdit = qs("input[name=name-edit]").value;
 
-  if (!data){
-    editButton.classList.add("inactive")
+    let newCharacter = {};
+
+    if (nameEdit) {
+      newCharacter.name = nameEdit;
+    }
+    if (occupationEdit) {
+      newCharacter.occupation = occupationEdit;
+    }
+    if (weaponEdit) {
+      newCharacter.weapon = weaponEdit;
+    }
+    if (cartoonEdit) {
+      newCharacter.cartoon = cartoonEdit;
+    }
+    console.log(newCharacter);
+
+    const { data } = await axios.patch(
+      `${baseUrl}/${idEditInput}`,
+      newCharacter
+    );
+    editButton.classList.add("active");
+  } catch (err) {
+    editButton.classList.add("inactive");
   }
 }
 
@@ -67,21 +85,22 @@ async function newCharacter(e) {
     name: nameCreateInput.value,
     occupation: occupationInput.value,
     weapon: weaponInput.value,
-    cartoon: !!cartoonInput.value,
+    cartoon: cartoonInput.checked,
   };
   const { data } = await axios.post(baseUrl, character);
   console.log(data);
 }
 
 async function deleteCharacter(e) {
-  e.preventDefault();
-  const deleteButton = document.getElementById("delete-one");
-  const character = {
-    id: idInput.value,
-  };
-  const { data } = await axios.delete(`${baseUrl}/${character.id}`);
-  deleteButton.classList.add("active");
-  if (!data) {
+  try {
+    e.preventDefault();
+    const deleteButton = document.getElementById("delete-one");
+    const character = {
+      id: idInput.value,
+    };
+    const { data } = await axios.delete(`${baseUrl}/${character.id}`);
+    deleteButton.classList.add("active");
+  } catch (err) {
     deleteButton.classList.add("inactive");
   }
 }
@@ -98,12 +117,12 @@ async function getCharacter(e) {
 
 function createTemplateAndAppend(character) {
   const clone = characterTemplate.content.cloneNode(true);
-  qs(".character-id", clone).textContent = `Id: ${character._id}`;
+  qs(".character-id span", clone).textContent = character._id;
   console.log(clone);
-  qs(".name", clone).textContent = `Name: ${character.name}`;
-  qs(".occupation", clone).textContent = `Occupation: ${character.occupation}`;
-  qs(".cartoon", clone).textContent = `Is a cartoon?: ${character.cartoon}`;
-  qs(".weapon", clone).textContent = `Weapon: ${character.weapon}`;
+  qs(".name span", clone).textContent = character.name;
+  qs(".occupation span", clone).textContent = character.occupation;
+  qs(".cartoon span", clone).textContent = character.cartoon;
+  qs(".weapon span", clone).textContent = character.weapon;
   characterContainer.append(clone);
 }
 
