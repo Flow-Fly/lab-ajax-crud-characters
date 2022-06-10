@@ -24,26 +24,26 @@ router.get("/", async (req, res, next) => {
 router.post("/", async (req, res, next) => {
   /**Your code goes here */
   try {
-    if (!req.body.name || typeof req.body.name !== "string") {
+    if (!req.body.name || typeOf(req.body.name !== "string")) {
       res.status(400).send("Please enter a valid name (should be a string)");
       return;
     }
 
-    if (!req.body.occupation || typeof req.body.occupation !== "string") {
+    if (!req.body.occupation || typeOf(req.body.occupation !== "string")) {
       res
         .status(400)
         .send("Please enter a valid occupation (should be a string).");
       return;
     }
 
-    // if (!req.body.cartoon || typeOf(req.body.cartoon) !== Boolean) {
-    //   res
-    //     .status(400)
-    //     .send("Please enter true or false for the cartoon field (boolean).");
-    //   return;
-    // }
+    if (!req.body.cartoon || typeOf(req.body.cartoon) !== "boolean") {
+      res
+        .status(400)
+        .send("Please enter true or false for the cartoon field (boolean).");
+      return;
+    }
 
-    if (!req.body.weapon || typeof req.body.weapon !== "string") {
+    if (!req.body.weapon || typeOf(req.body.weapon !== "string")) {
       res.status(400).send("Please enter a valid weapon (should be a string).");
       return;
     }
