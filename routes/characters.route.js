@@ -34,7 +34,7 @@ router.post("/", async (req, res, next) => {
     if (!occupation || typeof occupation !== "string") {
       message += "occupation, ";
     }
-    if (cartoon === null || typeof cartoon !== "boolean") {
+    if (typeof cartoon !== "boolean") { 
       message += "cartoon, ";
     }
     if (!weapon || typeof weapon !== "string") {
@@ -104,10 +104,10 @@ router.delete("/:id", async (req, res, next) => {
     const id = req.params.id;
     const deletedCharacter = await Character.findByIdAndDelete(id);
     if (!deletedCharacter) {
-      res.send("Character not found");
+      res.status(404).send("Character not found");
       return;
     }
-    res.send("Character has been successfully deleted");
+    res.status(200).send("Character has been successfully deleted");
   } catch (error) {
     next(error);
   }

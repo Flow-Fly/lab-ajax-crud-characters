@@ -1,3 +1,10 @@
+const cors = require("cors");
+const corsOptions = {
+  origin: "*",
+  credentials: true, //access-control-allow-credentials:true
+  optionSuccessStatus: 200,
+};
+
 // We reuse this import in order to have access to the `body` property in requests
 const express = require("express");
 
@@ -15,6 +22,7 @@ const cookieParser = require("cookie-parser");
 
 // Middleware configuration
 module.exports = (app) => {
+  app.use(cors(corsOptions)); // Use this after the variable declaration
   // Because this is a server that will accept requests from outside and it will be hosted ona server with a `proxy`, express needs to know that it should trust that setting.
   // Services like heroku use something called a proxy and you need to add this to your server
   app.set("trust proxy", 1);
