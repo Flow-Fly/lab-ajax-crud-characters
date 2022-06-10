@@ -2,13 +2,28 @@
  * You might want to use this template to display each new characters
  * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/template#examples
  */
-const baseUrl = `http://localhost:5005/api/characters`,
-  characterTemplate = document.getElementById('template'),
+const characterTemplate = document.getElementById('template'),
   charsContainer = qs(`.characters-container`),
   operationsEl = qs(`.operations`);
 
+const apiHandler = axios.create({
+  baseURL: `http://localhost:5005/api/characters`
+});
+apiHandler.getAllChars = async function() {
+  try {
+    const { data } = await this.get();
+
+    charsContainer.innerHTML = null;
+    data.forEach(char => {
+      appendChar(char, charsContainer);
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 document.getElementById('fetch-all').addEventListener('click', function (event) {
-  getAllChars();
+  apiHandler.getAllChars();
 });
 
 document.getElementById('fetch-one').addEventListener('click', async function (event) {
@@ -21,7 +36,7 @@ document.getElementById('fetch-one').addEventListener('click', async function (e
       return;
     }
 
-    const { data } = await axios.get(`${baseUrl}/${fetchName}`);
+    const { data } = await apiHandler.get(`/${fetchName}`);
     charsContainer.innerHTML = null;
 
     if (data.length) {
@@ -46,10 +61,10 @@ document.getElementById('delete-one').addEventListener('click', async function (
       return;
     }
 
-    const response = await axios.delete(`${baseUrl}/${deleteId}`);
+    const response = await apiHandler.delete(`/${deleteId}`);
     changeBtnColor(qs(`#delete-one`), `green`);
     deleteOneInput.value = null;
-    getAllChars();
+    apiHandler.getAllChars();
   } catch (error) {
     changeBtnColor(qs(`#delete-one`), `red`);
     console.error(error);
@@ -74,16 +89,20 @@ document.getElementById('edit-character-form').addEventListener('submit', async 
       };
 
     for (let key in character) {
-      if (!character[key].length) {
+      if (typeof character[key] === `string` && !character[key].length) {
         delete character[key];
       }
     }
 
-    const { data } = await axios.patch(`${baseUrl}/${charId.value}`, character);
+    if (!Object.keys(character).length) {
+      return;
+    }
+
+    const { data } = await apiHandler.patch(`/${charId.value}`, character);
 
     changeBtnColor(qs(`#send-data`, qs(`#edit-character-form`)), `green`);
 
-    getAllChars();
+    apiHandler.getAllChars();
     [charId,
       charName,
       charOccupation,
@@ -105,7 +124,7 @@ document.getElementById('new-character-form').addEventListener('submit', async f
       charWeapon = qs(`[name='weapon']`, newCharFormEl),
       charIsCartoon = qs(`[name='cartoon']`, newCharFormEl);
 
-    const { data } = await axios.post(baseUrl, {
+    const { data } = await apiHandler.post(``, {
       name: charName.value,
       occupation: charOccupation.value,
       weapon: charWeapon.value,
@@ -142,19 +161,6 @@ function appendChar(char, container) {
   qs(`.weapon span`, clone).textContent += `${char.weapon}`;
 
   container.appendChild(clone);
-}
-
-async function getAllChars() {
-  try {
-    const { data } = await axios.get(baseUrl);
-
-    charsContainer.innerHTML = null;
-    data.forEach(char => {
-      appendChar(char, charsContainer);
-    });
-  } catch (error) {
-    console.error(error);
-  }
 }
 
 function qs(selector, element = document) {
