@@ -54,6 +54,11 @@ button {
   background-color: #42f471;
 }
 
+.inactive {
+  background-color: #f44242;
+}
+
+
 .operations {
   margin: 0 auto;
   padding: 5px;
