@@ -22,7 +22,7 @@ document.getElementById('fetch-one').addEventListener('click', async function (e
     }
 
     const { data } = await axios.get(`${baseUrl}/${fetchName}`);
-    clearContainer(charsContainer);
+    charsContainer.innerHTML = null;
 
     if (data.length) {
       appendChar(data[0], charsContainer);
@@ -144,16 +144,11 @@ function appendChar(char, container) {
   container.appendChild(clone);
 }
 
-
-function clearContainer(containerEl) {
-  qsa(`*`, containerEl).forEach(el => { el.remove() });
-}
-
 async function getAllChars() {
   try {
     const { data } = await axios.get(baseUrl);
 
-    clearContainer(charsContainer);
+    charsContainer.innerHTML = null;
     data.forEach(char => {
       appendChar(char, charsContainer);
     });
