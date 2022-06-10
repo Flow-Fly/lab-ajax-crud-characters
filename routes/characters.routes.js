@@ -28,6 +28,7 @@ router.post("/", async (req, res, next) => {
     const { name, occupation, cartoon, weapon } = req.body;
     if (!name || !occupation || !cartoon || !weapon) {
       res.status(400).json({ message: `Please fill all the fields` });
+      return;
     }
     if (
       typeof name !== "string" ||
@@ -36,6 +37,7 @@ router.post("/", async (req, res, next) => {
       typeof weapon !== "string"
     ) {
       res.status(400).json({ message: `Please enter the correct field type` });
+      return;
     }
 
     const createdCharacter = await Character.create(req.body);

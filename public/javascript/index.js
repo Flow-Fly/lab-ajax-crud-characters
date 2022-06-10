@@ -8,7 +8,8 @@ const baseUrl = "http://localhost:5005/api/characters";
 const characterContainer = qs(".characters-container");
 
 const nameInput = qs("input[name=character-name]");
-console.log(nameInput);
+
+const idInput = qs("input[name=character-id-delete");
 
 document.getElementById("fetch-all").addEventListener("click", getCharacters);
 
@@ -16,7 +17,7 @@ document.getElementById("fetch-one").addEventListener("click", getOneCharacter);
 
 document
   .getElementById("delete-one")
-  .addEventListener("click", function (event) {});
+  .addEventListener("click", deleteCharacter);
 
 document
   .getElementById("edit-character-form")
@@ -26,9 +27,13 @@ document
   .getElementById("new-character-form")
   .addEventListener("submit", function (event) {});
 
-async function getCharacters() {
+async function getCharacters(e) {
+  characterContainer.innerHTML = "";
+  e.preventDefault();
   const { data } = await axios.get(baseUrl);
-  createTemplateAndAppend(data.character);
+  data.forEach((character) => {
+    createTemplateAndAppend(character);
+  });
 }
 
 async function getOneCharacter(e) {
@@ -41,6 +46,7 @@ async function getOneCharacter(e) {
     return;
   }
   const { data } = await axios.get(`${baseUrl}/${character.name}`);
+
   createTemplateAndAppend(data[0]);
 }
 
@@ -54,6 +60,11 @@ function createTemplateAndAppend(character) {
   characterContainer.append(clone);
 }
 
+async function deleteCharacter(e) {
+  e.preventDefault();
+  const character = { id: idInput.value };
+  await axios.delete(`${baseUrl}/${character.id}`);
+}
 function qs(selector, element = document) {
   return element.querySelector(selector);
 }
