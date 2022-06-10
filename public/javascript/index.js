@@ -46,6 +46,7 @@ async function getOneCharacter(e) {
     return;
   }
   const { data } = await axios.get(`${baseUrl}/${character.name}`);
+  console.log(data);
 
   createTemplateAndAppend(data[0]);
 }
@@ -62,8 +63,24 @@ function createTemplateAndAppend(character) {
 
 async function deleteCharacter(e) {
   e.preventDefault();
-  const character = { id: idInput.value };
-  await axios.delete(`${baseUrl}/${character.id}`);
+  try {
+    const character = { id: idInput.value };
+
+    const res = await axios.delete(`${baseUrl}/${character.id}`);
+    console.log(res.status);
+
+    if (res.status === 204) {
+      qs("#delete-one").classList.remove("wrong");
+      qs("#delete-one").classList.add("active");
+      console.log(`deleted`);
+    } else {
+      qs("#delete-one").classList.remove("active");
+      qs("#delete-one").classList.add("wrong");
+      console.log(`wrong`);
+    }
+  } catch (error) {
+    qs("#delete-one").classList.add("wrong");
+  }
 }
 function qs(selector, element = document) {
   return element.querySelector(selector);

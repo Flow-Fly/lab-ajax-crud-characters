@@ -85,8 +85,13 @@ router.patch("/:id", async (req, res, next) => {
 router.delete("/:id", async (req, res, next) => {
   /**Your code goes here */
   try {
-    await Character.findByIdAndDelete(req.params.id);
-    res.status(204).json({ message: `Succesfully deleted` });
+    const response = await Character.findByIdAndDelete(req.params.id);
+    if (!response) {
+      res.sendStatus(400);
+      return;
+    } else {
+      res.status(204).json({ message: `Succesfully deleted` });
+    }
   } catch (error) {
     next(error);
   }
