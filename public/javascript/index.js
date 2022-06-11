@@ -88,10 +88,10 @@ async function createCharacter(e) {
   e.preventDefault();
   try {
     const character = {
-      name: createName.value,
-      occupation: createOccupation.value,
-      weapon: createWeapon.value,
-      cartoon: createCartoon.checked,
+      name: editName.value,
+      occupation: editOccupation.value,
+      weapon: editWeapon.value,
+      cartoon: editCartoon.checked,
     };
     // console.log(character);
     const res = await axios.post(baseUrl, character);
@@ -113,11 +113,18 @@ async function updateCharacter(e) {
   try {
     const character = {
       id: editId.value,
-      name: editName.value,
-      occupation: editOccupation.value,
-      weapon: editWeapon.value,
       cartoon: editCartoon.checked,
     };
+    if (editName.value.length != 0) {
+      character.name = editName.value;
+    }
+    if (editOccupation.value.length != 0) {
+      character.occupation = editOccupation.value;
+    }
+    if (editWeapon.value.length != 0) {
+      character.weapon = editWeapon.value;
+    }
+
     // console.log(character);
     const res = await axios.patch(`${baseUrl}/${character.id}`, character);
     if (res.status === 200) {
