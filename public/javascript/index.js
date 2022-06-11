@@ -1,3 +1,5 @@
+// const { create } = require("../../models/Character.model");
+
 /**
  * You might want to use this template to display each new characters
  * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/template#examples
@@ -8,8 +10,25 @@ const baseUrl = "http://localhost:5005/api/characters";
 const characterContainer = qs(".characters-container");
 
 const nameInput = qs("input[name=character-name]");
-
 const idInput = qs("input[name=character-id-delete");
+
+const createName = qs("#new-character-form .field input[name=name]");
+const createOccupation = qs(
+  "#new-character-form:nth-child(2) input[name=occupation]"
+);
+
+const createWeapon = qs(
+  "#new-character-form > div:nth-child(3) > input:nth-child(2)"
+);
+
+const createCartoon = qs(
+  "#new-character-form > div:nth-child(4) > input:nth-child(2)"
+);
+
+// console.log(createCartoon);
+
+const createSubmitButton = qs("#new-character-form #send-data");
+const editSubmitButton = qs("#edit-character-form #send-data");
 
 document.getElementById("fetch-all").addEventListener("click", getCharacters);
 
@@ -25,7 +44,7 @@ document
 
 document
   .getElementById("new-character-form")
-  .addEventListener("submit", function (event) {});
+  .addEventListener("submit", createCharacter);
 
 async function getCharacters(e) {
   characterContainer.innerHTML = "";
@@ -37,6 +56,7 @@ async function getCharacters(e) {
 }
 
 async function getOneCharacter(e) {
+  characterContainer.innerHTML = "";
   e.preventDefault();
   const character = {
     name: nameInput.value,
@@ -46,9 +66,32 @@ async function getOneCharacter(e) {
     return;
   }
   const { data } = await axios.get(`${baseUrl}/${character.name}`);
-  console.log(data);
 
   createTemplateAndAppend(data[0]);
+}
+
+async function createCharacter(e) {
+  e.preventDefault();
+  try {
+    const character = {
+      name: createName.value,
+      occupation: createOccupation.value,
+      weapon: createWeapon.value,
+      cartoon: createCartoon.checked,
+    };
+    // console.log(character);
+    const res = await axios.post(baseUrl, character);
+    if (res.status === 201) {
+      createSubmitButton.classList.remove("wrong");
+      createSubmitButton.classList.add("active");
+    } else {
+      createSubmitButton.classList.remove("active");
+      createSubmitButton.classList.add("wrong");
+    }
+  } catch (error) {
+    createSubmitButton.classList.remove("active");
+    createSubmitButton.classList.add("wrong");
+  }
 }
 
 function createTemplateAndAppend(character) {
@@ -67,18 +110,16 @@ async function deleteCharacter(e) {
     const character = { id: idInput.value };
 
     const res = await axios.delete(`${baseUrl}/${character.id}`);
-    console.log(res.status);
 
     if (res.status === 204) {
       qs("#delete-one").classList.remove("wrong");
       qs("#delete-one").classList.add("active");
-      console.log(`deleted`);
     } else {
       qs("#delete-one").classList.remove("active");
       qs("#delete-one").classList.add("wrong");
-      console.log(`wrong`);
     }
   } catch (error) {
+    qs("#delete-one").classList.remove("active");
     qs("#delete-one").classList.add("wrong");
   }
 }

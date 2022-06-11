@@ -25,8 +25,8 @@ router.get("/", async (req, res, next) => {
 router.post("/", async (req, res, next) => {
   /**Your code goes here */
   try {
-    const { name, occupation, cartoon, weapon } = req.body;
-    if (!name || !occupation || !cartoon || !weapon) {
+    const { name, occupation, weapon, cartoon } = req.body;
+    if (!name || !occupation || !weapon) {
       res.status(400).json({ message: `Please fill all the fields` });
       return;
     }
@@ -41,7 +41,7 @@ router.post("/", async (req, res, next) => {
     }
 
     const createdCharacter = await Character.create(req.body);
-    res.status(200).json(createdCharacter);
+    res.status(201).json(createdCharacter);
   } catch (error) {
     next(error);
   }
