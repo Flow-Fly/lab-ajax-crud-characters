@@ -25,6 +25,20 @@ const createCartoon = qs(
   "#new-character-form > div:nth-child(4) > input:nth-child(2)"
 );
 
+const editName = qs("#edit-character-form .field input[name=name]");
+const editId = qs(
+  "#edit-character-form  > div:nth-child(1) > input:nth-child(2)"
+);
+const editOccupation = qs(
+  "#edit-character-form  > div:nth-child(3) > input:nth-child(2)"
+);
+const editWeapon = qs(
+  "#edit-character-form  > div:nth-child(4) > input:nth-child(2)"
+);
+const editCartoon = qs(
+  "#edit-character-form  > div:nth-child(5) > input:nth-child(2)"
+);
+
 // console.log(createCartoon);
 
 const createSubmitButton = qs("#new-character-form #send-data");
@@ -40,7 +54,7 @@ document
 
 document
   .getElementById("edit-character-form")
-  .addEventListener("submit", function (event) {});
+  .addEventListener("submit", updateCharacter);
 
 document
   .getElementById("new-character-form")
@@ -91,6 +105,31 @@ async function createCharacter(e) {
   } catch (error) {
     createSubmitButton.classList.remove("active");
     createSubmitButton.classList.add("wrong");
+  }
+}
+
+async function updateCharacter(e) {
+  e.preventDefault();
+  try {
+    const character = {
+      id: editId.value,
+      name: editName.value,
+      occupation: editOccupation.value,
+      weapon: editWeapon.value,
+      cartoon: editCartoon.checked,
+    };
+    // console.log(character);
+    const res = await axios.patch(`${baseUrl}/${character.id}`, character);
+    if (res.status === 200) {
+      editSubmitButton.classList.remove("wrong");
+      editSubmitButton.classList.add("active");
+    } else {
+      editSubmitButton.classList.remove("active");
+      editSubmitButton.classList.add("wrong");
+    }
+  } catch (error) {
+    editSubmitButton.classList.remove("active");
+    editSubmitButton.classList.add("wrong");
   }
 }
 

@@ -71,6 +71,7 @@ router.patch("/:id", async (req, res, next) => {
 
     if (!updatedCharacter) {
       res.status(404).json({ message: `No character with the specified id` });
+      return;
     }
     res.status(200).json({ updatedCharacter });
   } catch (error) {
