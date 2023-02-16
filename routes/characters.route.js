@@ -55,7 +55,7 @@ router.patch("/characters/:CharID", async (req, res, next) => {
   const { CharID } = req.params;
   const { CharToUpdate } = { ...req.body };
   try {
-    await Character.findByIDAndAUpdate(CharID, CharToUpdate);
+    await Character.findByIdAndUpdate(CharID, CharToUpdate);
     res.json({ message: `Successfully updated character : ${CharID}` });
   } catch (error) {
     next(error);
