@@ -6,6 +6,7 @@
 
   document.getElementById('fetch-all').addEventListener('click', function (event) {
 
+
   });
 
   document.getElementById('fetch-one').addEventListener('click', function (event) {
