@@ -37,29 +37,31 @@
 				</div>
 			</section>
 		</section>
+
 		<section class="container">
 			<section class="form-container">
 				<h2>New Character</h2>
 				<form id="new-character-form" class="character-form">
 					<div class="field">
 						<label for="name">Name: </label>
-						<input type="text" name="name" />
+						<input type="text" name="name" id="name"/>
 					</div>
 					<div class="field">
 						<label for="occupation">Occupation: </label>
-						<input type="text" name="occupation" />
+						<input type="text" name="occupation" id="occupation"/>
 					</div>
 					<div class="field">
 						<label for="weapon">Weapon: </label>
-						<input type="text" name="weapon" />
+						<input type="text" name="weapon" id="weapon"/>
 					</div>
 					<div class="field">
 						<label for="cartoon">Is a Cartoon: </label>
-						<input name="cartoon" type="checkbox" />
+						<input name="cartoon" type="checkbox" id="cartoon"/>
 					</div>
-					<button id="send-data">Create</button>
+					<button id="send-data-create">Create</button>
 				</form>
 			</section>
+<!-- Edit Character -->
 			<section class="form-container">
 				<h2>Edit Character</h2>
 				<form id="edit-character-form" class="character-form">
@@ -83,11 +85,12 @@
 						<label for="cartoon">Is a Cartoon: </label>
 						<input name="cartoon" type="checkbox" />
 					</div>
-					<button id="send-data">Update</button>
+					<button id="send-data-update">Update</button>
 				</form>
 			</section>
 		</section>
-		<!-- Template to create characters -->
+
+<!-- Template to create characters -->
 		<template id="template">
 			<div class="character-info">
 				<div class="character-id">Id: <span></span></div>

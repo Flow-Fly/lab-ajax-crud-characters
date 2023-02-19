@@ -1,9 +1,9 @@
-const router = require("express").Router();
+const router = require('express').Router()
 
-router.get("/", (req, res, next) => {
-  res.sendFile('index');
-});
+router.get('/', (req, res, next) => {
+  res.sendFile('index')
+})
 
 router.use('/characters', require('./characters.route'))
 
-module.exports = router;
+module.exports = router
