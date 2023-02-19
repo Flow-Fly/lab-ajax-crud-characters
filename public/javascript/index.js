@@ -61,66 +61,11 @@ deleteOneButton.addEventListener('click', deleteOneCharacter)
 editCharacterForm.addEventListener('submit', editCharacter)
 newCharacterForm.addEventListener('submit', createCharacter)
 
-//キャラクターをデータベースにアップする
-async function addCharacterToDatabase(event) {
-  //ページのリロードをキャンセルする
-  event.preventDefault()
-  //入力された情報
-  const name = nameInput.value
-  const occupation = occupationInput.value
-  const weapon = weaponInput.value
-  const cartoon = cartoonInput.value
-  const characterToCreate = {
-    name,
-    occupation,
-    weapon,
-    cartoon,
-  }
-  try {
-    //オブジェクトにURLの情報と入力された投稿情報を代入する
-    const { data: character } = await axios.post(
-      `${myUrl}characters`,
-      characterToCreate
-    )
-    //オブジェクトのデータを元に新しいキャラクターを作成する
-    createCharacter(character)
-  } catch (error) {
-    console.log(error)
-  }
-}
-
-//新規キャラクター作成
-function createCharacter(character) {
-  //テンプレートを複製する
-  const clone = characterTemplate.content.cloneNode(true)
-  //クローンの入力フォームに上記で作成したキャラクター情報を挿入する
-  clone.querySelector('.character-id > span').textContent = character._id
-  clone.querySelector('.name > span').textContent = character.name
-  clone.querySelector('.occupation > span').textContent = character.occupation
-  clone.querySelector('.weapon > span').textContent = character.weapon
-  clone.querySelector('.cartoon > span').textContent = character.cartoon
-  //画面上部の表示場所に置く
-  displayedCharacterSection.appendChild(clone)
-}
-
-//アップデートする
-function fillTheUpdateForm(character) {
-  //編集画面の入力フォームに入力する
-  nameInputUpdate.value = character.name
-  occupationInputUpdate.value = character.occupation
-  weaponInputUpdate.value = character.weapon
-  cartoonInputUpdate.value = character.cartoon
-  // updateForm.dataset.id = character._id
-}
-
 //データを取得 - axios.get
 async function fetchAllCharacters() {
-  //画面からキャラクターを消す
   displayedCharacterSection.innerHTML = ''
   try {
-    //HTTP通信(API通信)でサーバーから全データを取得してdataオブジェクトに代入
     const { data } = await axios.get(`${myUrl}characters`)
-    //dataの情報を取り出してキャラクターを作成する
     for (const character of data) {
       createCharacter(character)
     }
@@ -134,7 +79,6 @@ async function fetchOneCharacter() {
   const key = inputFetchOneForm.value
   displayedCharacterSection.innerHTML = ''
   try {
-    //HTTP通信(API通信)でサーバーから１つのデータを取得してdataオブジェクトに代入
     const { data: character } = await axios.get(`${myUrl}characters/${key}`)
     createCharacter(character)
   } catch (error) {
@@ -142,7 +86,42 @@ async function fetchOneCharacter() {
   }
 }
 
-//新規にデータを登録 - axios.post
+//新規投稿する - axios.post
+async function addCharacterToDatabase(event) {
+  event.preventDefault()
+  const name = nameInput.value
+  const occupation = occupationInput.value
+  const weapon = weaponInput.value
+  const cartoon = cartoonInput.value
+  const characterToCreate = {
+    name,
+    occupation,
+    weapon,
+    cartoon,
+  }
+  try {
+    const { data: character } = await axios.post(
+      `${myUrl}characters`,
+      characterToCreate
+    )
+    createCharacter(character)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+//キャラクター作成を作成して画面にアップ
+function createCharacter(character) {
+  const clone = characterTemplate.content.cloneNode(true)
+  clone.querySelector('.character-id > span').textContent = character._id
+  clone.querySelector('.name > span').textContent = character.name
+  clone.querySelector('.occupation > span').textContent = character.occupation
+  clone.querySelector('.weapon > span').textContent = character.weapon
+  clone.querySelector('.cartoon > span').textContent = character.cartoon
+  displayedCharacterSection.appendChild(clone) //画面上部の表示場所に置く
+}
+
+//データを編集する - axios.post
 async function editCharacter(event) {
   event.preventDefault()
   try {
@@ -157,13 +136,13 @@ async function editCharacter(event) {
       `${myUrl}characters/${id}`,
       characterToEdit
     )
-    console.log(data)
     fetchAllCharacters()
   } catch (error) {
     console.error(error)
   }
 }
 
+//データを削除する - axios.delete
 async function deleteOneCharacter() {
   try {
     const id = inputDeleteForm.value

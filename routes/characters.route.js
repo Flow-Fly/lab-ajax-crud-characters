@@ -27,7 +27,8 @@ router.post('/', async (req, res, next) => {
 
 router.get('/:id', async (req, res, next) => {
   try {
-    const oneCharacter = await Character.findOne(req.params)
+    const { id } = req.params
+    const oneCharacter = await Character.findById(id)
     res.json(oneCharacter)
   } catch (error) {
     next(error)
@@ -36,7 +37,7 @@ router.get('/:id', async (req, res, next) => {
 
 router.patch('/:id', async (req, res, next) => {
   try {
-    const { id } = req.params
+    const { id } = req.params.id
     const { name, occupation, cartoon, weapon } = req.body
     const updatedCharacter = await Character.findByIdAndUpdate(
       id,
