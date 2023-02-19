@@ -1,12 +1,6 @@
 const router = require('express').Router()
 const Character = require('../models/Character.model')
-/**
- * !All the routes here are prefixed with /api/characters
- */
 
-/**
- * ? This route should respond with all the characters
- */
 router.get('/', async (req, res, next) => {
   try {
     const allCharacters = await Character.find()
@@ -16,10 +10,6 @@ router.get('/', async (req, res, next) => {
   }
 })
 
-/**
- * ? This route should create one character and respond with
- * ? the created character
- */
 router.post('/', async (req, res, next) => {
   try {
     const { name, occupation, weapon, cartoon } = req.body
@@ -35,13 +25,8 @@ router.post('/', async (req, res, next) => {
   }
 })
 
-/**
- * ? This route should respond with one character
- */
 router.get('/:id', async (req, res, next) => {
   try {
-    // const { id } = req.params
-    // const idButAnotherWay = req.params.id
     const oneCharacter = await Character.findOne(req.params)
     res.json(oneCharacter)
   } catch (error) {
@@ -49,10 +34,6 @@ router.get('/:id', async (req, res, next) => {
   }
 })
 
-/**
- * ? This route should update a character and respond with
- * ? the updated character
- */
 router.patch('/:id', async (req, res, next) => {
   try {
     const { id } = req.params
@@ -68,18 +49,7 @@ router.patch('/:id', async (req, res, next) => {
   }
 })
 
-/**
- * ? Should delete a character and respond with a success or
- * ? error message
- */
 router.delete('/:id', async (req, res, next) => {
-  // try {
-  //   const deleteId = await Character.findByIdAndDelete(req.params.id)
-  //   res.json(deleteId)
-  // } catch (error) {
-  //   next(error)
-  // }
-
   const { id } = req.params
   try {
     await Character.findByIdAndDelete(id)

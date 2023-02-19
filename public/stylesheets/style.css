@@ -68,7 +68,7 @@ button {
 }
 .character-info {
   position: relative;
-  width: 80%;
+  width: 70%;
   margin: 10px;
   padding: 10px;
   text-align: left;
@@ -79,7 +79,7 @@ button {
 .character-info div span {
   color: #d8b362;
   position: absolute;
-  left: 50%;
+  left: 30%;
 }
 
 .form-container {

@@ -6,36 +6,66 @@ const characterApi = axios.create({
   baseURL: 'http://localhost:5005/api/characters/',
 })
 const myUrl = 'http://localhost:5005/api/'
+
 const characterTemplate = document.getElementById('template')
 const fetchAllButton = document.getElementById('fetch-all')
 const fetchOneButton = document.getElementById('fetch-one')
 const deleteOneButton = document.getElementById('delete-one')
+const createButton = document.getElementById('send-data-create')
+
+//入力フォーム
 const editCharacterForm = document.getElementById('edit-character-form')
 const newCharacterForm = document.getElementById('new-character-form')
-const displayedCharacterSection = document.querySelector('.character-info')
-const nameInput = document.getElementById('name')
-const occupationInput = document.getElementById('occupation')
-const weaponInput = document.getElementById('weapon')
-const cartoonInput = document.getElementById('cartoon')
-const nameInputUpdate = document.getElementById('name-update')
-const occupationInputUpdate = document.getElementById('occupation-update')
-const weaponInputUpdate = document.getElementById('weapon-update')
-const cartoonInputUpdate = document.getElementById('cartoon-update')
+const displayedCharacterSection = document.querySelector(
+  '.characters-container'
+)
 const updateForm = document.getElementById('edit-character-form')
+const inputDeleteForm = document.querySelector(
+  'input[name="character-id-delete"]'
+)
+const inputFetchOneForm = document.querySelector('input[name="character-name"]')
 
-const inputDelete = document.querySelector('[name=character-id-delete]')
-const createButton = document.getElementById('send-data-create')
+//新キャラクター作成の入力フォーム
+const nameInput = document.querySelector(
+  '#new-character-form input[name="name"]'
+)
+const occupationInput = document.querySelector(
+  '#new-character-form input[name="occupation"]'
+)
+const weaponInput = document.querySelector(
+  '#new-character-form input[name="weapon"]'
+)
+const cartoonInput = document.querySelector(
+  '#new-character-form input[name="cartoon"]'
+)
+//編集用の入力フォーム
+const idInputUpdate = document.querySelector(
+  '#edit-character-form input[name="chr-id"]'
+)
+const nameInputUpdate = document.querySelector(
+  '#edit-character-form input[name="name"]'
+)
+const occupationInputUpdate = document.querySelector(
+  '#edit-character-form input[name="occupation"]'
+)
+const weaponInputUpdate = document.querySelector(
+  '#edit-character-form input[name="weapon"]'
+)
+const cartoonInputUpdate = document.querySelector(
+  '#edit-character-form input[name="cartoon"]'
+)
+
 fetchAllButton.addEventListener('click', fetchAllCharacters)
 fetchOneButton.addEventListener('click', fetchOneCharacter)
-deleteOneButton.addEventListener(
-  'submit',
-  deleteOneCharacter(inputDelete.value)
-)
-// editCharacterForm.addEventListener('submit', editCharacter)
+deleteOneButton.addEventListener('click', deleteOneCharacter)
+editCharacterForm.addEventListener('submit', editCharacter)
 newCharacterForm.addEventListener('submit', createCharacter)
 
+//キャラクターをデータベースにアップする
 async function addCharacterToDatabase(event) {
+  //ページのリロードをキャンセルする
   event.preventDefault()
+  //入力された情報
   const name = nameInput.value
   const occupation = occupationInput.value
   const weapon = weaponInput.value
@@ -47,36 +77,50 @@ async function addCharacterToDatabase(event) {
     cartoon,
   }
   try {
-    const response = await characterApi.post('/', characterToCreate)
-    console.log(response)
-    createCharacter(response.data)
+    //オブジェクトにURLの情報と入力された投稿情報を代入する
+    const { data: character } = await axios.post(
+      `${myUrl}characters`,
+      characterToCreate
+    )
+    //オブジェクトのデータを元に新しいキャラクターを作成する
+    createCharacter(character)
   } catch (error) {
     console.log(error)
   }
 }
 
-function createCharacter(element) {
+//新規キャラクター作成
+function createCharacter(character) {
+  //テンプレートを複製する
   const clone = characterTemplate.content.cloneNode(true)
-  clone.querySelector('.character-id span').textContent = element._id
-  clone.querySelector('.name span').textContent = element.name
-  clone.querySelector('.occupation span').textContent = element.occupation
-  clone.querySelector('.weapon span').textContent = element.weapon
-  clone.querySelector('.cartoon span').textContent = element.cartoon
-  displayedCharacterSection.append(clone)
+  //クローンの入力フォームに上記で作成したキャラクター情報を挿入する
+  clone.querySelector('.character-id > span').textContent = character._id
+  clone.querySelector('.name > span').textContent = character.name
+  clone.querySelector('.occupation > span').textContent = character.occupation
+  clone.querySelector('.weapon > span').textContent = character.weapon
+  clone.querySelector('.cartoon > span').textContent = character.cartoon
+  //画面上部の表示場所に置く
+  displayedCharacterSection.appendChild(clone)
 }
 
+//アップデートする
 function fillTheUpdateForm(character) {
+  //編集画面の入力フォームに入力する
   nameInputUpdate.value = character.name
   occupationInputUpdate.value = character.occupation
   weaponInputUpdate.value = character.weapon
   cartoonInputUpdate.value = character.cartoon
-  updateForm.dataset.id = character._id
+  // updateForm.dataset.id = character._id
 }
 
+//データを取得 - axios.get
 async function fetchAllCharacters() {
+  //画面からキャラクターを消す
   displayedCharacterSection.innerHTML = ''
   try {
+    //HTTP通信(API通信)でサーバーから全データを取得してdataオブジェクトに代入
     const { data } = await axios.get(`${myUrl}characters`)
+    //dataの情報を取り出してキャラクターを作成する
     for (const character of data) {
       createCharacter(character)
     }
@@ -85,21 +129,46 @@ async function fetchAllCharacters() {
   }
 }
 
-async function fetchOneCharacter(name) {
+//データを取得 - axios.get
+async function fetchOneCharacter() {
+  const key = inputFetchOneForm.value
   displayedCharacterSection.innerHTML = ''
   try {
-    const message = await axios.get(`${myUrl}characters/${name}`)
-    //console.log(message)
-    createCharacter(message.data)
+    //HTTP通信(API通信)でサーバーから１つのデータを取得してdataオブジェクトに代入
+    const { data: character } = await axios.get(`${myUrl}characters/${key}`)
+    createCharacter(character)
   } catch (error) {
     console.error(error)
   }
 }
 
-async function deleteOneCharacter(id) {
+//新規にデータを登録 - axios.post
+async function editCharacter(event) {
+  event.preventDefault()
   try {
-    const message = await axios.delete(`${myUrl}characters/${id}`)
-    await fetchAllCharacters()
+    const id = idInputUpdate._id
+    const name = nameInputUpdate.name
+    const occupation = occupationInputUpdate.occupation
+    const weapon = weaponInputUpdate.weapon
+    const cartoon = cartoonInputUpdate.cartoon
+    const characterToEdit = { name, occupation, weapon, cartoon }
+    //データをサーバーへ送る
+    const { data } = await axios.post(
+      `${myUrl}characters/${id}`,
+      characterToEdit
+    )
+    console.log(data)
+    fetchAllCharacters()
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+async function deleteOneCharacter() {
+  try {
+    const id = inputDeleteForm.value
+    await axios.delete(`${myUrl}characters/${id}`)
+    fetchAllCharacters()
   } catch (error) {
     console.error(error)
   }
