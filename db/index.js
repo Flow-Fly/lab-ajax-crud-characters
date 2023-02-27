@@ -10,7 +10,7 @@ require("dotenv/config")
 // If no env has been set, we dynamically set it to whatever the folder name was upon the creation of the app
 
 const MONGO_URI =
-	process.env.MONGODB_URI || "mongodb://localhost/ajax-crud-characters"
+	process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/ajax-crud-characters"
 async function openConnection() {
 	try {
 		return await mongoose.connect(MONGO_URI)
